@@ -1,0 +1,7 @@
+ARG_ENABLE('study', 'study support', 'no');
+
+if (PHP_STUDY != 'no') {
+	AC_DEFINE('HAVE_STUDY', 1, 'study support enabled');
+
+	EXTENSION('study', 'study.c', null, '/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
+}
