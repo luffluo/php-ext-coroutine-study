@@ -1,0 +1,2 @@
+phpize --clean
+phpize
