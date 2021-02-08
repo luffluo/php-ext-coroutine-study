@@ -1,1 +1,1 @@
-# Study - a php ext for coroutine
+# Study - a php extension of coroutine
