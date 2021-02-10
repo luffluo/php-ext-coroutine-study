@@ -1,5 +1,7 @@
 <?php
 
-\Study\Coroutine::create(function () {
-    echo 'Hi i\'m callable';
+$a = \Study\Coroutine::create(function () {
+    return "Hi, i'm a callable \n";
 });
+
+var_dump($a);
