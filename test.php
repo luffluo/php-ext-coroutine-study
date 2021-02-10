@@ -1,8 +1,5 @@
 <?php
 
-echo 'Hello Study';
-echo "\n";
-
-study_test1();
-
-echo "\n";
+\Study\Coroutine::create(function () {
+    echo 'Hi i\'m callable';
+});
