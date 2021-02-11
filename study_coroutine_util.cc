@@ -1,5 +1,7 @@
 #include "study_coroutine.h"
 
+using study::PhpCoroutine;
+
 zend_class_entry study_coroutine_ce;
 zend_class_entry *study_coroutine_ce_ptr;
 
@@ -18,12 +20,7 @@ PHP_METHOD(study_coroutine_util, create)
         Z_PARAM_VARIADIC('*', fci.params, fci.param_count)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
-    fci.retval = &result;
-    if (zend_call_function(&fci, &fcc) != SUCCESS) {
-        return;
-    }
-
-    *return_value = result;
+    PhpCoroutine::create(&fcc, fci.param_count, fci.params);
 }
 
 const zend_function_entry study_coroutine_util_methods[] = {
