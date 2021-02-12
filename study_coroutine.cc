@@ -4,7 +4,7 @@ using study::PhpCoroutine;
 
 long PhpCoroutine::create(zend_fcall_info_cache *fci_cache, uint32_t argc, zval *argv)
 {
-    php_coro_args_t php_coro_args;
+    php_coro_args php_coro_args;
     php_coro_args.fci_cache = fci_cache;
     php_coro_args.argc = argc;
     php_coro_args.argv = argv;
@@ -14,12 +14,12 @@ long PhpCoroutine::create(zend_fcall_info_cache *fci_cache, uint32_t argc, zval 
     return 0;
 }
 
-void PhpCoroutine::save_task(php_coro_task_t *task)
+void PhpCoroutine::save_task(php_coro_task *task)
 {
     save_vm_stack(task);
 }
 
-void PhpCoroutine::save_vm_stack(php_coro_task_t *task)
+void PhpCoroutine::save_vm_stack(php_coro_task *task)
 {
     task->vm_stack_top = EG(vm_stack_top);
     task->vm_stack_end = EG(vm_stack_end);
@@ -28,7 +28,7 @@ void PhpCoroutine::save_vm_stack(php_coro_task_t *task)
     task->execute_data = EG(current_execute_data);
 }
 
-php_coro_task_t *PhpCoroutine::get_task()
+php_coro_task *PhpCoroutine::get_task()
 {
     return nullptr;
 }
