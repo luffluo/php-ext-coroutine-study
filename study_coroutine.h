@@ -24,6 +24,8 @@ namespace study {
             static long create(zend_fcall_info_cache *fci_cache, uint32_t argc, zval *argv);
 
         protected:
+            static php_coro_task main_task;
+
             static void save_task(php_coro_task *task);
             static void save_vm_stack(php_coro_task *task);
             static php_coro_task *get_task();
