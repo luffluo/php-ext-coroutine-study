@@ -3,13 +3,31 @@
 using study::Coroutine;
 
 Coroutine *Coroutine::current = nullptr;
+std::unordered_map<long, Coroutine*> Coroutine::coroutines;
+size_t Coroutine::stack_size = DEFAULT_C_STACK_SIZE;
+long Coroutine::last_cid = 0;
+
+long Coroutine::create(coroutine_func_t fn, void *args)
+{
+    return (new Coroutine(fn, args))->run();
+}
 
 void *Coroutine::get_task()
 {
     return task;
 }
 
+void Coroutine::set_task(void *_task)
+{
+    task = _task;
+}
+
 void *Coroutine::get_current_task()
 {
     return Coroutine::current ? Coroutine::current->get_task() : nullptr;
+}
+
+Coroutine *Coroutine::get_current()
+{
+    return current;
 }
