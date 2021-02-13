@@ -18,6 +18,17 @@ long PhpCoroutine::create(zend_fcall_info_cache *fci_cache, uint32_t argc, zval 
     return Coroutine::create(create_func, (void *) &php_coro_args);
 }
 
+void PhpCoroutine::defer(php_study_fci_fcc *defer_fci_fcc)
+{
+    php_coro_task *task = (php_coro_task *) get_task();
+    
+    if (task->defer_tasks == nullptr) {
+        task->defer_tasks = new std::stack<php_study_fci_fcc *>;
+    }
+
+    task->defer_tasks->push(defer_fci_fcc);
+}
+
 void PhpCoroutine::save_task(php_coro_task *task)
 {
     save_vm_stack(task);
@@ -93,12 +104,37 @@ void PhpCoroutine::create_func(void *arg)
 
     task->co = Coroutine::get_current();
     task->co->set_task((void *) task);
+    task->defer_tasks = nullptr;
 
     if (func->type == ZEND_USER_FUNCTION) {
         ZVAL_UNDEF(retval);
         EG(current_execute_data) = NULL;
         zend_init_func_execute_data(call, &func->op_array, retval);
         zend_execute_ex(EG(current_execute_data));
+    }
+
+    task = get_task();
+    std::stack<php_study_fci_fcc *> *defer_tasks = task->defer_tasks;
+
+    if (defer_tasks) {
+        php_study_fci_fcc *defer_fci_fcc;
+        zval result;
+
+        while (!defer_tasks->empty()) {
+            defer_fci_fcc = defer_tasks->top();
+            defer_tasks->pop();
+            defer_fci_fcc->fci.retval = &result;
+
+            if (zend_call_function(&defer_fci_fcc->fci, &defer_fci_fcc->fcc) != SUCCESS) {
+                php_error_docref(NULL, E_WARNING, "defer execute error");
+                return;
+            }
+
+            efree(defer_fci_fcc);
+        }
+
+        delete defer_tasks;
+        task->defer_tasks = nullptr;
     }
 
     zval_ptr_dtor(retval);
