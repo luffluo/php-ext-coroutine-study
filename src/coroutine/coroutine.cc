@@ -43,4 +43,12 @@ void Coroutine::resume()
     origin = current;
     current = this;
     ctx.swap_in();
+
+    if (ctx.is_end()) {
+        cid = current->get_cid();
+        printf("in resume method: co[%ld] end\n", cid);
+        current = origin;
+        coroutines.erase(cid);
+        delete this;
+    }
 }
