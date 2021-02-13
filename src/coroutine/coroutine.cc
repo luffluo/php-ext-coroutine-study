@@ -31,3 +31,9 @@ Coroutine *Coroutine::get_current()
 {
     return current;
 }
+
+void Coroutine::yield()
+{
+    current = origin;
+    ctx.swap_out();
+}

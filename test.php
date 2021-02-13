@@ -1,17 +1,13 @@
 <?php
 
-function task($n, $a, $b)
+function task($n, $arg)
 {
-    if (1 === $n) {
-        echo "coroutine [{$n}] create successfully" . PHP_EOL;
-    }
-
+    echo "coroutine [{$n}] create successfully" . PHP_EOL;
     if (2 === $n) {
-        echo "coroutine [{$n}] create successfully" . PHP_EOL;
+        \Study\Coroutine::yield();
     }
 
-    echo $a . PHP_EOL;
-    echo $b . PHP_EOL;
+    echo 'Hi im 2' . PHP_EOL;
 }
 
 echo "main coroutine" . PHP_EOL;
