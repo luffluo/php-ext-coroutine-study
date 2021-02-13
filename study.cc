@@ -22,6 +22,12 @@ PHP_FUNCTION(study_test1)
 ZEND_BEGIN_ARG_INFO(arginfo_study_test1, 0)
 ZEND_END_ARG_INFO()
 
+PHP_FUNCTION(study_coroutine_create);
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_create, 0, 0, 1)
+    ZEND_ARG_CALLABLE_INFO(0, func, 0)
+ZEND_END_ARG_INFO()
+
 PHP_MINIT_FUNCTION(study)
 {
     study_coroutine_util_init();
@@ -60,6 +66,8 @@ PHP_MINFO_FUNCTION(study)
 /* {{{ study_functions[]
  */
 static const zend_function_entry study_functions[] = {
+    PHP_FE(study_coroutine_create, arginfo_study_coroutine_create)
+    PHP_FALIAS(go, study_coroutine_create, arginfo_study_coroutine_create)
 	PHP_FE(study_test1,		arginfo_study_test1)
 	PHP_FE_END
 };
