@@ -19,7 +19,9 @@ PHP_METHOD(study_coroutine_util, create)
         Z_PARAM_VARIADIC('*', fci.params, fci.param_count)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
-    PhpCoroutine::create(&fcc, fci.param_count, fci.params);
+    long cid = PhpCoroutine::create(&fcc, fci.param_count, fci.params);
+
+    RETURN_LONG(cid);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_create, 0, 0, 1)
@@ -59,10 +61,18 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_resume, 0, 0, 1)
     ZEND_ARG_INFO(0, cid)
 ZEND_END_ARG_INFO()
 
+PHP_METHOD(study_coroutine_util, getCid)
+{
+    Coroutine *co = Coroutine::get_current();
+    
+    RETURN_LONG(co->get_cid());
+}
+
 const zend_function_entry study_coroutine_util_methods[] = {
     PHP_ME(study_coroutine_util, create, arginfo_study_coroutine_create, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(study_coroutine_util, yield, arginfo_study_coroutine_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(study_coroutine_util, resume, arginfo_study_coroutine_resume, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(study_coroutine_util, getCid, arginfo_study_coroutine_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_FE_END
 };
 
