@@ -69,6 +69,10 @@ ZEND_END_ARG_INFO()
 PHP_METHOD(study_coroutine_util, getCid)
 {
     Coroutine *co = Coroutine::get_current();
+
+    if (co == nullptr) {
+        RETURN_LONG(-1);
+    }
     
     RETURN_LONG(co->get_cid());
 }

@@ -2,6 +2,10 @@
 
 use Study\Coroutine;
 
+$cid = Coroutine::getCid();
+echo "coroutine [{$cid}] create" . PHP_EOL;
+die();
+
 function task($arg)
 {
     $cid = Coroutine::getCid();
