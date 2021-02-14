@@ -6,6 +6,8 @@ $cid = go(function () {
     echo "after sleep" . PHP_EOL;
 });
 echo "main co" . PHP_EOL;
+
+Co::scheduler();
 die();
 
 Co::sleep(1);

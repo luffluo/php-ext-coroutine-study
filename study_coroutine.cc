@@ -34,6 +34,12 @@ int PhpCoroutine::sleep(double seconds)
     return Coroutine::sleep(seconds);
 }
 
+int PhpCoroutine::scheduler()
+{
+    while (1) {
+    }
+}
+
 void PhpCoroutine::save_task(php_coro_task *task)
 {
     save_vm_stack(task);
