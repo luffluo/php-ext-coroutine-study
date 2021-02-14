@@ -1,10 +1,17 @@
 <?php
 
-$cid = go(function () {
+go(function () {
     echo "before sleep" . PHP_EOL;
-    Co::sleep(1);
+    Co::sleep(10);
     echo "after sleep" . PHP_EOL;
 });
+
+go(function () {
+    echo "before sleep" . PHP_EOL;
+    Co::sleep(20);
+    echo "after sleep" . PHP_EOL;
+});
+
 echo "main co" . PHP_EOL;
 
 Co::scheduler();

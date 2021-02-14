@@ -36,9 +36,13 @@ int PhpCoroutine::sleep(double seconds)
 
 int PhpCoroutine::scheduler()
 {
+    int timeout;
     uv_loop_t *loop = uv_default_loop();
 
     while (loop->stop_flag == 0) {
+        timeout = uv__next_timeout(loop);
+        usleep(timeout);
+
         loop->time = uv__hrtime(UV_CLOCK_FAST) / 1000000;
         uv__run_timers(loop);
 
