@@ -16,6 +16,7 @@ extern zend_module_entry study_module_entry;
 
 PHP_FUNCTION(study_test1);
 void study_coroutine_util_init();
+void study_coroutine_server_coro_init();
 
 # if defined(ZTS) && defined(COMPILE_DL_STUDY)
 ZEND_TSRMLS_CACHE_EXTERN()

@@ -1,5 +1,10 @@
 <?php
 
+$server = new \Study\Coroutine\Server();
+var_dump($server);
+
+die();
+
 go(function () {
     echo "before sleep" . PHP_EOL;
     Co::sleep(10);
