@@ -1,5 +1,8 @@
 <?php
 
+study_timer_test();
+die();
+
 function deferFunc1()
 {
     echo "in defer " . __FUNCTION__ . PHP_EOL;
