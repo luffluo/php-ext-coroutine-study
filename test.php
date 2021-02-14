@@ -1,5 +1,13 @@
 <?php
 
+$cid = go(function () {
+    echo "before sleep" . PHP_EOL;
+    Co::sleep(1);
+    echo "after sleep" . PHP_EOL;
+});
+echo "main co" . PHP_EOL;
+die();
+
 Co::sleep(1);
 Co::sleep(0.1);
 Co::sleep(0.01);

@@ -1,7 +1,5 @@
 #include "coroutine.h"
 #include "study_coroutine.h"
-#include <stdio.h>
-#include <iostream>
 
 using study::Coroutine;
 using study::PhpCoroutine;
@@ -33,9 +31,7 @@ void PhpCoroutine::defer(php_study_fci_fcc *defer_fci_fcc)
 
 int PhpCoroutine::sleep(double seconds)
 {
-    std::cout << seconds << std::endl;
-
-    return 0;
+    return Coroutine::sleep(seconds);
 }
 
 void PhpCoroutine::save_task(php_coro_task *task)
