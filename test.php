@@ -1,5 +1,12 @@
 <?php
 
+Co::sleep(1);
+Co::sleep(0.1);
+Co::sleep(0.01);
+Co::sleep(0.001);
+Co::sleep(0.0001);
+die();
+
 study_timer_test();
 die();
 
