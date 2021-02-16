@@ -64,3 +64,16 @@ int st_socket_accept(int sockfd)
 
     return connfd;
 }
+
+int st_socket_recv(int sockfd, void *buf, size_t len, int flag)
+{
+    ssize_t ret;
+
+    ret = recv(sockfd, buf, len, flag);
+
+    if (ret < 0) {
+        st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
+    }
+
+    return ret;
+}

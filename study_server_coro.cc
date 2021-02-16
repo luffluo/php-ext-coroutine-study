@@ -3,6 +3,9 @@
 zend_class_entry study_coroutine_server_coro_ce;
 zend_class_entry *study_coroutine_server_coro_ce_ptr;
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_server_coro_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 PHP_METHOD(study_coroutine_server_coro, __construct)
 {
     int sockfd;
@@ -39,12 +42,41 @@ PHP_METHOD(study_coroutine_server_coro, accept)
     RETURN_LONG(connfd);
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_server_coro_void, 0, 0, 0)
+PHP_METHOD(study_coroutine_server_coro, recv)
+{
+    int ret;
+    zend_long fd;
+    zend_long length = 65536;
+
+    ZEND_PARSE_PARAMETERS_START(1, 2)
+        Z_PARAM_LONG(fd)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(length)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+
+    zend_string *buf = zend_string_alloc(length, 0);
+
+    ret = st_socket_recv(fd, ZSTR_VAL(buf), length, 0);
+
+    if (ret < 0) {
+        php_error_docref(NULL, E_WARNING, "recv error");
+        RETURN_FALSE;
+    }
+
+    ZSTR_VAL(buf)[ret] = '\0';
+
+    RETURN_STR(buf);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_server_coro_recv, 0, 0, 2)
+    ZEND_ARG_INFO(0, fd)
+    ZEND_ARG_INFO(0, length)
 ZEND_END_ARG_INFO()
 
 static const zend_function_entry study_coroutine_server_coro_methods[] = {
     PHP_ME(study_coroutine_server_coro, __construct, arginfo_study_coroutine_server_coro_construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(study_coroutine_server_coro, accept, arginfo_study_coroutine_server_coro_void, ZEND_ACC_PUBLIC)
+    PHP_ME(study_coroutine_server_coro, recv, arginfo_study_coroutine_server_coro_recv, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
