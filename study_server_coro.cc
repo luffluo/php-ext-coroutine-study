@@ -73,10 +73,38 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_server_coro_recv, 0, 0, 2)
     ZEND_ARG_INFO(0, length)
 ZEND_END_ARG_INFO()
 
+PHP_METHOD(study_coroutine_server_coro, send)
+{
+    ssize_t retval;
+    zend_long fd;
+    char *data;
+    size_t length;
+
+    ZEND_PARSE_PARAMETERS_START(2, 2)
+        Z_PARAM_LONG(fd)
+        Z_PARAM_STRING(data, length)
+    ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
+
+    retval = st_socket_send(fd, data, length, 0);
+
+    if (retval < 0) {
+        php_error_docref(NULL, E_WARNING, "send error");
+        RETURN_FALSE;
+    }
+
+    RETURN_LONG(retval);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_server_coro_send, 0, 0, 2)
+    ZEND_ARG_INFO(0, fd)
+    ZEND_ARG_INFO(0, data)
+ZEND_END_ARG_INFO()
+
 static const zend_function_entry study_coroutine_server_coro_methods[] = {
     PHP_ME(study_coroutine_server_coro, __construct, arginfo_study_coroutine_server_coro_construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(study_coroutine_server_coro, accept, arginfo_study_coroutine_server_coro_void, ZEND_ACC_PUBLIC)
     PHP_ME(study_coroutine_server_coro, recv, arginfo_study_coroutine_server_coro_recv, ZEND_ACC_PUBLIC)
+    PHP_ME(study_coroutine_server_coro, send, arginfo_study_coroutine_server_coro_send, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
