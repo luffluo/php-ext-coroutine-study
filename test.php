@@ -2,6 +2,7 @@
 
 $server = new \Study\Coroutine\Server('127.0.0.1', 8080);
 var_dump($server);
+var_dump($server->accept());
 
 die();
 

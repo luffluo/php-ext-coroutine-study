@@ -18,6 +18,13 @@ PHP_FUNCTION(study_test1);
 void study_coroutine_util_init();
 void study_coroutine_server_coro_init();
 
+inline zval *st_zend_read_property(zend_class_entry *class_ptr, zval *obj, const char *name, int len, int silent)
+{
+    zval rv;
+
+    return zend_read_property(class_ptr, obj, name, len, silent, &rv);
+}
+
 # if defined(ZTS) && defined(COMPILE_DL_STUDY)
 ZEND_TSRMLS_CACHE_EXTERN()
 # endif

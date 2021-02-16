@@ -28,8 +28,23 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_server_coro_construct, 0, 0, 2)
     ZEND_ARG_INFO(0, port)
 ZEND_END_ARG_INFO()
 
+PHP_METHOD(study_coroutine_server_coro, accept)
+{
+    zval *sockfd;
+    int connfd;
+
+    sockfd = st_zend_read_property(study_coroutine_server_coro_ce_ptr, getThis(), ZEND_STRL("sock"), 0);
+    connfd = st_socket_accept(Z_LVAL_P(sockfd));
+
+    RETURN_LONG(connfd);
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_study_coroutine_server_coro_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 static const zend_function_entry study_coroutine_server_coro_methods[] = {
     PHP_ME(study_coroutine_server_coro, __construct, arginfo_study_coroutine_server_coro_construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+    PHP_ME(study_coroutine_server_coro, accept, arginfo_study_coroutine_server_coro_void, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
