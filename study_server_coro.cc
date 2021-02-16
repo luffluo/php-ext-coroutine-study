@@ -16,7 +16,7 @@ PHP_METHOD(study_coroutine_server_coro, __construct)
 
     sockfd = st_socket_create(ST_SOCK_TCP);
     st_socket_bind(sockfd, ST_SOCK_TCP, Z_STRVAL_P(zhost), zport);
-    listen(sockfd, 512);
+    st_socket_listen(sockfd);
 
     zend_update_property_long(study_coroutine_server_coro_ce_ptr, getThis(), ZEND_STRL("sock"), sockfd);
     zend_update_property_string(study_coroutine_server_coro_ce_ptr, getThis(), ZEND_STRL("host"), Z_STRVAL_P(zhost));

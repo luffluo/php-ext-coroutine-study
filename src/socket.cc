@@ -1,4 +1,5 @@
 #include "socket.h"
+#include "log.h"
 
 int st_socket_create(int type)
 {
@@ -35,6 +36,19 @@ int st_socket_bind(int sockfd, int type, char *host, int port)
         }
     } else {
         return -1;
+    }
+
+    return ret;
+}
+
+int st_socket_listen(int sockfd)
+{
+    int ret;
+
+    ret = listen(sockfd, 512);
+
+    if (ret < 0) {
+        st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
     }
 
     return ret;
