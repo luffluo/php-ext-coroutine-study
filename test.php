@@ -2,8 +2,18 @@
 
 $server = new \Study\Coroutine\Server('127.0.0.1', 8080);
 $fd = $server->accept();
-$buf = $server->recv($fd);
-$server->send($fd, $buf);
+
+while (1) {
+    $buf = $server->recv($fd);
+
+    if (false === $buf) {
+        var_dump($server->errCode);
+        var_dump($server->errMsg);
+        break;
+    }
+
+    $server->send($fd, $buf);
+}
 
 die();
 
