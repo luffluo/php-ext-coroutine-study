@@ -1,5 +1,21 @@
 <?php
 
+go(function () {
+    var_dump('Here1');
+    Co::sleep(0.5);
+    var_dump('Here2');
+    Co::sleep(1);
+    var_dump('Here3');
+    Co::sleep(1.5);
+    var_dump("here4");
+    co::sleep(2);
+    var_dump("here5");
+});
+
+Co::scheduler();
+
+die();
+
 $server = new \Study\Coroutine\Server('127.0.0.1', 8080);
 $fd = $server->accept();
 
@@ -7,8 +23,6 @@ while (1) {
     $buf = $server->recv($fd);
 
     if (false === $buf) {
-        var_dump($server->errCode);
-        var_dump($server->errMsg);
         break;
     }
 

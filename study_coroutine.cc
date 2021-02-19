@@ -37,11 +37,18 @@ int PhpCoroutine::sleep(double seconds)
 int PhpCoroutine::scheduler()
 {
     int timeout;
+    size_t size;
     uv_loop_t *loop = uv_default_loop();
+
+    study_g.poll.epollfd = epoll_create(256);
+    study_g.poll.ncap = 16;
+    size = sizeof(struct epoll_event) * study_g.poll.ncap;
+    study_g.poll.events = (struct epoll_event *) malloc(size);
+    memset(study_g.poll.events, 0, size);
 
     while (loop->stop_flag == 0) {
         timeout = uv__next_timeout(loop);
-        usleep(timeout);
+        epoll_wait(study_g.poll.epollfd, study_g.poll.events, study_g.poll.ncap, timeout);
 
         loop->time = uv__hrtime(UV_CLOCK_FAST) / 1000000;
         uv__run_timers(loop);
