@@ -17,7 +17,7 @@ PHP_METHOD(study_coroutine_server_coro, __construct)
         Z_PARAM_LONG(zport)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
-    sockfd = st_socket_create(ST_SOCK_TCP);
+    sockfd = st_socket_create(AF_INET, ST_SOCK_TCP, 0);
     st_socket_bind(sockfd, ST_SOCK_TCP, Z_STRVAL_P(zhost), zport);
     st_socket_listen(sockfd);
 
