@@ -15,6 +15,12 @@ Socket::Socket(int domain, int type, int protocol)
     st_socket_set_nonblock(sockfd);
 }
 
+Socket::Socket(int fd)
+{
+    sockfd = fd;
+    st_socket_set_nonblock(sockfd);
+}
+
 int Socket::bind(int type, char *host, int port)
 {
     return st_socket_bind(sockfd, type, host, port);

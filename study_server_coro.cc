@@ -50,7 +50,7 @@ PHP_METHOD(study_coroutine_server_coro, accept)
 
 PHP_METHOD(study_coroutine_server_coro, recv)
 {
-    int ret;
+    ssize_t ret;
     zend_long fd;
     zend_long length = 65536;
 
@@ -62,8 +62,8 @@ PHP_METHOD(study_coroutine_server_coro, recv)
 
     zend_string *buf = zend_string_alloc(length, 0);
 
-    ret = st_socket_recv(fd, ZSTR_VAL(buf), length, 0);
-
+    Socket conn(fd);
+    ret = conn.recv(ZSTR_VAL(buf), length);
     if (ret == 0) {
         zend_update_property_long(study_coroutine_server_coro_ce_ptr, getThis(), ZEND_STRL("errCode"), ST_ERROR_SESSION_CLOSED_BY_CLIENT);
         zend_update_property_string(study_coroutine_server_coro_ce_ptr, getThis(), ZEND_STRL("errMsg"), st_strerror(ST_ERROR_SESSION_CLOSED_BY_CLIENT));

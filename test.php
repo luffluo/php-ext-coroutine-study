@@ -5,7 +5,11 @@ go(function() {
 
     while (1) {
         $connfd = $server->accept();
-        var_dump($connfd);
+
+        while (1) {
+            $msg = $server->recv($connfd);
+            var_dump($msg);
+        }
     }
 });
 
