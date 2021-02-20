@@ -97,7 +97,8 @@ PHP_METHOD(study_coroutine_server_coro, send)
         Z_PARAM_STRING(data, length)
     ZEND_PARSE_PARAMETERS_END_EX(RETURN_FALSE);
 
-    retval = st_socket_send(fd, data, length, 0);
+    Socket conn(fd);
+    retval = conn.send(data, length);
 
     if (retval < 0) {
         php_error_docref(NULL, E_WARNING, "send error");

@@ -5,11 +5,12 @@ go(function() {
 
     while (1) {
         $connfd = $server->accept();
-
-        while (1) {
-            $msg = $server->recv($connfd);
-            var_dump($msg);
-        }
+        go(function() use ($server, $connfd) {
+            while (1) {
+                $msg = $server->recv($connfd);
+                $server->send($connfd, $msg);
+            }
+        });
     }
 });
 
