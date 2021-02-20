@@ -92,12 +92,24 @@ ssize_t st_socket_recv(int sockfd, void *buf, size_t len, int flag)
     return ret;
 }
 
-ssize_t st_socket_send(int sockfd, void *buf, size_t len, int flag)
+ssize_t st_socket_send(int sockfd, const void *buf, size_t len, int flag)
 {
     ssize_t ret;
 
     ret = send(sockfd, buf, len, flag);
 
+    if (ret < 0) {
+        st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
+    }
+
+    return ret;
+}
+
+int st_socket_close(int sockfd)
+{
+    int ret;
+
+    ret = close(sockfd);
     if (ret < 0) {
         st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
     }

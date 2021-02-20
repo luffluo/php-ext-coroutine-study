@@ -37,6 +37,32 @@ int Socket::accept()
     return connfd;
 }
 
+ssize_t Socket::recv(void *buf, size_t len)
+{
+    int ret;
+
+    ret = st_socket_recv(sockfd, buf, len, 0);
+    if (ret < 0 && errno == EAGAIN) {
+        wait_event(ST_EVENT_READ);
+        ret = st_socket_recv(sockfd, buf, len, 0);
+    }
+
+    return ret;
+}
+
+ssize_t Socket::send(const void *buf, size_t len)
+{
+    int ret;
+
+    ret = st_socket_send(sockfd, buf, len, 0);
+    if (ret < 0 && errno == EAGAIN) {
+        wait_event(ST_EVENT_WRITE);
+        ret = st_socket_send(sockfd, buf, len, 0);
+    }
+
+    return ret;
+}
+
 bool Socket::wait_event(int event)
 {
     long cid;
@@ -55,4 +81,9 @@ bool Socket::wait_event(int event)
     co->yield();
 
     return true;
+}
+
+int Socket::close()
+{
+    return st_socket_close(sockfd);
 }
