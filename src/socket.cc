@@ -76,6 +76,10 @@ int st_socket_accept(int sockfd)
 
     connfd = accept(sockfd, (struct sockaddr *) &sa, &len);
 
+    if (connfd < 0 && errno != EAGAIN) {
+        st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
+    }
+
     return connfd;
 }
 
@@ -85,7 +89,7 @@ ssize_t st_socket_recv(int sockfd, void *buf, size_t len, int flag)
 
     ret = recv(sockfd, buf, len, flag);
 
-    if (ret < 0) {
+    if (ret < 0 && errno != EAGAIN) {
         st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
     }
 
@@ -98,7 +102,7 @@ ssize_t st_socket_send(int sockfd, const void *buf, size_t len, int flag)
 
     ret = send(sockfd, buf, len, flag);
 
-    if (ret < 0) {
+    if (ret < 0 && errno != EAGAIN) {
         st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
     }
 

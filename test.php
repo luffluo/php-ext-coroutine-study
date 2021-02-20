@@ -1,6 +1,16 @@
 <?php
 
-$server = new \Study\Coroutine\Server('127.0.0.1', 8080);
+go(function() {
+    $server = new \Study\Coroutine\Server('127.0.0.1', 8080);
+
+    while (1) {
+        $connfd = $server->accept();
+        var_dump($connfd);
+    }
+});
+
+Co::scheduler();
+exit;
 
 while (1) {
     $connfd = $server->accept();

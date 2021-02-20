@@ -7,12 +7,12 @@ using study::coroutine::Socket;
 
 Socket::Socket(int domain, int type, int protocol)
 {
-    int fd = st_socket_create(domain, type, protocol);
-    if (fd < 0) {
+    sockfd = st_socket_create(domain, type, protocol);
+    if (sockfd < 0) {
         return;
     }
 
-    st_socket_set_nonblock(fd);
+    st_socket_set_nonblock(sockfd);
 }
 
 int Socket::bind(int type, char *host, int port)
@@ -72,6 +72,10 @@ bool Socket::wait_event(int event)
     co = Coroutine::get_current();
     cid = co->get_cid();
 
+    if (!study_g.poll) {
+        init_st_poll();
+    }
+
     ev = study_g.poll->events;
     
     ev->events = event == ST_EVENT_READ ? EPOLLIN : EPOLLOUT;
@@ -86,4 +90,9 @@ bool Socket::wait_event(int event)
 int Socket::close()
 {
     return st_socket_close(sockfd);
+}
+
+Socket::~Socket()
+{
+
 }
