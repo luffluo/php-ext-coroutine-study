@@ -1,7 +1,9 @@
+#include "log.h"
 #include "socket.h"
 #include "coroutine.h"
 #include "coroutine_socket.h"
 
+using namespace std;
 using study::Coroutine;
 using study::coroutine::Socket;
 
@@ -92,6 +94,11 @@ bool Socket::wait_event(int event)
 
     co->yield();
 
+    if (epoll_ctl(study_g.poll->epollfd, EPOLL_CTL_DEL, sockfd, NULL) < 0) {
+        st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
+        return false;
+    }
+
     return true;
 }
 
@@ -108,9 +115,10 @@ Socket::~Socket()
 int Socket::init_read_buffer()
 {
     if (!read_buffer) {
-        read_buffer = (char *) malloc(65536);
-        if (read_buffer == NULL) {
-            return -1;
+        try {
+            read_buffer = new char[65536];
+        } catch(const std::bad_alloc& e) {
+            st_error("%s", e.what());
         }
 
         read_buffer_len = 65536;
@@ -122,9 +130,10 @@ int Socket::init_read_buffer()
 int Socket::init_write_buffer()
 {
     if (!write_buffer) {
-        write_buffer = (char *) malloc(65536);
-        if (write_buffer == NULL) {
-            return -1;
+        try {
+            write_buffer = new char[65536];
+        } catch(const std::bad_alloc& e) {
+            st_error("%s", e.what());
         }
 
         write_buffer_len = 65536;

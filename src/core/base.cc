@@ -3,13 +3,18 @@
 #include "study.h"
 #include "coroutine.h"
 
+using namespace std;
 using study::Coroutine;
 
 st_global_t study_g;
 
 int init_st_poll()
 {
-    size_t size;
+    try {
+        study_g.poll = new st_poll_t();
+    } catch (const std::exception& e) {
+        st_error("%s", e.what());
+    }
 
     study_g.poll = (st_poll_t *) malloc(sizeof(st_poll_t));
 
@@ -21,16 +26,19 @@ int init_st_poll()
     study_g.poll->epollfd = epoll_create(256);
     if (study_g.poll->epollfd < 0) {
         st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
-        free(study_g.poll);
-        study_g.poll = NULL;
+        delete study_g.poll;
+        study_g.poll = nullptr;
         return -1;
     }
 
     study_g.poll->ncap = 16;
-    size = sizeof(struct epoll_event) * study_g.poll->ncap;
-    study_g.poll->events = (struct epoll_event *) malloc(size);
+    try {
+        study_g.poll->events = new epoll_event[study_g.poll->ncap]();
+    } catch(const std::bad_alloc& e) {
+        st_error("%s", e.what());
+    }
+    
     study_g.poll->event_num = 0;
-    memset(study_g.poll->events, 0, size);
 
     return 0;
 }
@@ -41,10 +49,10 @@ int free_st_poll()
         st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
     }
 
-    free(study_g.poll->events);
-    study_g.poll->events = NULL;
-    free(study_g.poll);
-    study_g.poll = NULL;
+    delete[] study_g.poll->events;
+    study_g.poll->events = nullptr;
+    delete study_g.poll;
+    study_g.poll = nullptr;
 
     return 0;
 }
@@ -111,6 +119,7 @@ int st_event_wait()
 
 int st_event_free()
 {
+    study_g.running = 0;
     free_st_poll();
 
     return 0;
