@@ -21,12 +21,15 @@ int init_st_poll()
     study_g.poll->epollfd = epoll_create(256);
     if (study_g.poll->epollfd < 0) {
         st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
+        free(study_g.poll);
+        study_g.poll = NULL;
         return -1;
     }
 
     study_g.poll->ncap = 16;
     size = sizeof(struct epoll_event) * study_g.poll->ncap;
     study_g.poll->events = (struct epoll_event *) malloc(size);
+    study_g.poll->event_num = 0;
     memset(study_g.poll->events, 0, size);
 
     return 0;
@@ -34,8 +37,14 @@ int init_st_poll()
 
 int free_st_poll()
 {
+    if (close(study_g.poll->epollfd) < 0) {
+        st_warn("Error has occurred: (errno %d) %s", errno, strerror(errno));
+    }
+
     free(study_g.poll->events);
+    study_g.poll->events = NULL;
     free(study_g.poll);
+    study_g.poll = NULL;
 
     return 0;
 }
@@ -45,6 +54,8 @@ int st_event_init()
     if (!study_g.poll) {
         init_st_poll();
     }
+
+    study_g.running = 1;
 
     return 0;
 }
@@ -62,11 +73,9 @@ int st_event_wait()
 {
     uv_loop_t *loop = uv_default_loop();
 
-    if (!study_g.poll) {
-        st_error("Need to call st_event_init first.");
-    }
+    st_event_init();
 
-    while (loop->stop_flag == 0) {
+    while (study_g.running > 0) {
         int n;
         int timeout;
         epoll_event *events;
@@ -90,8 +99,8 @@ int st_event_wait()
         loop->time = uv__hrtime(UV_CLOCK_FAST) / 1000000;
         uv__run_timers(loop);
 
-        if (uv__next_timeout(loop) < 0 && !study_g.poll) {
-            uv_stop(loop);
+        if (uv__next_timeout(loop) < 0 && study_g.poll->event_num == 0) {
+            study_g.running = 0;
         }
     }
 
