@@ -184,5 +184,9 @@ void PhpCoroutine::create_func(void *arg)
         task->defer_tasks = nullptr;
     }
 
+    // free php stack
+    zend_vm_stack stack = EG(vm_stack);
+    efree(stack);
+
     zval_ptr_dtor(retval);
 }

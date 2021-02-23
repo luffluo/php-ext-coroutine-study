@@ -1,5 +1,13 @@
 <?php
 
+while (true) {
+    go(function() {
+        $cid = Co::getCid();
+        var_dump($cid);
+    });
+}
+exit;
+
 go(function() {
     var_dump('server start');
     $server = new \Study\Coroutine\Server('127.0.0.1', 8080);

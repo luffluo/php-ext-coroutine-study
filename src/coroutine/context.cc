@@ -33,3 +33,12 @@ bool Context::swap_out()
 
     return true;
 }
+
+Context::~Context()
+{
+    // free c stack
+    if (swap_ctx_) {
+        free(stack_);
+        stack_ = NULL;
+    }
+}
