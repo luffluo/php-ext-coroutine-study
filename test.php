@@ -10,14 +10,20 @@ go(function() {
         $connfd = $server->accept();
         var_dump('accept connectied ' . $connfd);
 
-        go(function() use ($server, $connfd) {
-            while (1) {
+        // go(function() use ($server, $connfd) {
+            // while (1) {
                 var_dump('recv start');
-                $msg = $server->recv($connfd);
-                $server->send($connfd, $msg);
-                var_dump('send end');
-            }
-        });
+                $buf = $server->recv($connfd);
+                $responseStr = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\nContent-Length: 11\r\n\r\nhello world\r\n";
+                var_dump('send start');
+                $server->send($connfd, $responseStr);
+                var_dump('close start');
+                $server->close($connfd);
+                // $msg = $server->recv($connfd);
+                // $server->send($connfd, $msg);
+                // var_dump('send end');
+            // }
+        // });
     }
 });
 
