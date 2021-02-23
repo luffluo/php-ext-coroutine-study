@@ -1,5 +1,23 @@
 <?php
 
+study_event_init();
+
+go(function() {
+    var_dump(1);
+    Co::sleep(1);
+    var_dump(2);
+});
+
+go(function() {
+    var_dump(3);
+    Co::sleep(1);
+    var_dump(4);
+});
+
+study_event_wait();
+
+exit;
+
 while (true) {
     go(function() {
         $cid = Co::getCid();
@@ -35,7 +53,6 @@ go(function() {
     }
 });
 
-Co::scheduler();
 exit;
 
 while (1) {

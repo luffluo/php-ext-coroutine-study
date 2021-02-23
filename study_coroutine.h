@@ -29,22 +29,12 @@ struct php_coro_task {
     std::stack<php_study_fci_fcc *> *defer_tasks;
 };
 
-typedef enum {
-    UV_CLOCK_PRECISE = 0,  /* Use the highest resolution clock available. */
-    UV_CLOCK_FAST = 1      /* Use the fastest clock with <= 1ms granularity. */
-} uv_clocktype_t;
-
-extern "C" void uv__run_timers(uv_loop_t* loop);
-extern "C" uint64_t uv__hrtime(uv_clocktype_t type);
-extern "C" int uv__next_timeout(const uv_loop_t* loop);
-
 namespace study {
     class PhpCoroutine {
         public:
             static long create(zend_fcall_info_cache *fci_cache, uint32_t argc, zval *argv);
             static void defer(php_study_fci_fcc *defer_fci_fcc);
             static int sleep(double seconds);
-            static int scheduler();
 
         protected:
             static php_coro_task main_task;
