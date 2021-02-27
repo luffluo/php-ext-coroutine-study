@@ -153,6 +153,7 @@ const zend_function_entry study_coroutine_util_methods[] = {
 
 void study_coroutine_util_init()
 {
+    PhpCoroutine::init();
     INIT_NS_CLASS_ENTRY(study_coroutine_ce, "Study", "Coroutine", study_coroutine_util_methods);
     study_coroutine_ce_ptr = zend_register_internal_class(&study_coroutine_ce TSRMLS_CC);
     zend_register_class_alias("Co", study_coroutine_ce_ptr);

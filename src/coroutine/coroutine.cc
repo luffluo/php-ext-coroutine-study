@@ -8,6 +8,9 @@ std::unordered_map<long, Coroutine*> Coroutine::coroutines;
 size_t Coroutine::stack_size = DEFAULT_C_STACK_SIZE;
 long Coroutine::last_cid = 0;
 
+st_coro_on_swap_t Coroutine::on_yield = nullptr;
+st_coro_on_swap_t Coroutine::on_resume = nullptr;
+
 long Coroutine::create(coroutine_func_t fn, void *args)
 {
     return (new Coroutine(fn, args))->run();
@@ -47,7 +50,7 @@ void Coroutine::resume()
 
     if (ctx.is_end()) {
         cid = current->get_cid();
-        printf("in resume method: co[%ld] end\n", cid);
+        // printf("in resume method: co[%ld] end\n", cid);
         current = origin;
         coroutines.erase(cid);
         delete this;
@@ -68,4 +71,14 @@ int Coroutine::sleep(double seconds)
     co->yield();
 
     return 0;
+}
+
+void Coroutine::set_on_yield(st_coro_on_swap_t func)
+{
+    on_yield = func;
+}
+
+void Coroutine::set_on_resume(st_coro_on_swap_t func)
+{
+    on_resume = func;
 }
