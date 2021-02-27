@@ -1,8 +1,5 @@
 /* study extension for PHP */
 
-#include <stdio.h>
-#include <iostream>
-#include <uv.h>
 #include "php_study.h"
 
 using namespace std;
@@ -15,23 +12,6 @@ uint64_t repeat = 0;
 	ZEND_PARSE_PARAMETERS_START(0, 0) \
 	ZEND_PARSE_PARAMETERS_END()
 #endif
-
-static void callback(uv_timer_t *handle)
-{
-    repeat = repeat + 1;
-
-    cout << "repeat count:" << repeat << endl;
-}
-
-PHP_FUNCTION(study_timer_test)
-{
-    uv_loop_t *loop = uv_default_loop();
-    uv_timer_t timer_req;
-    
-    uv_timer_init(loop, &timer_req);
-    uv_timer_start(&timer_req, callback, 1000, 1000);
-    uv_run(loop, UV_RUN_DEFAULT);
-}
 
 /* {{{ void study_test1()
  */

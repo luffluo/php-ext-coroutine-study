@@ -1,10 +1,14 @@
-#include "uv.h"
 #include "log.h"
+#include "timer.h"
 #include "study.h"
 #include "coroutine.h"
 
 using namespace std;
+
+using study::Timer;
 using study::Coroutine;
+using study::TimerManager;
+using study::timer_manager;
 
 st_global_t study_g;
 
@@ -68,19 +72,8 @@ int st_event_init()
     return 0;
 }
 
-typedef enum {
-    UV_CLOCK_PRECISE = 0,  /* Use the highest resolution clock available. */
-    UV_CLOCK_FAST = 1      /* Use the fastest clock with <= 1ms granularity. */
-} uv_clocktype_t;
-
-extern "C" void uv__run_timers(uv_loop_t* loop);
-extern "C" uint64_t uv__hrtime(uv_clocktype_t type);
-extern "C" int uv__next_timeout(const uv_loop_t* loop);
-
 int st_event_wait()
 {
-    uv_loop_t *loop = uv_default_loop();
-
     st_event_init();
 
     while (study_g.running > 0) {
@@ -88,7 +81,7 @@ int st_event_wait()
         int timeout;
         epoll_event *events;
 
-        timeout = uv__next_timeout(loop);
+        timeout = timer_manager.get_next_timeout();
         events = study_g.poll->events;
         n = epoll_wait(study_g.poll->epollfd, events, study_g.poll->ncap, timeout);
 
@@ -104,10 +97,9 @@ int st_event_wait()
             co->resume();
         }
 
-        loop->time = uv__hrtime(UV_CLOCK_FAST) / 1000000;
-        uv__run_timers(loop);
+        timer_manager.run_timers();
 
-        if (uv__next_timeout(loop) < 0 && study_g.poll->event_num == 0) {
+        if (timer_manager.get_next_timeout() < 0 && study_g.poll->event_num == 0) {
             study_g.running = 0;
         }
     }

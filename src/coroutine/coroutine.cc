@@ -1,3 +1,4 @@
+#include "timer.h"
 #include "coroutine.h"
 
 using study::Coroutine;
@@ -53,20 +54,16 @@ void Coroutine::resume()
     }
 }
 
-static void sleep_timeout(uv_timer_t *timer)
+static void sleep_timeout(void *param)
 {
-    ((Coroutine *) timer->data)->resume();
+    ((Coroutine *) param)->resume();
 }
 
 int Coroutine::sleep(double seconds)
 {
     Coroutine *co = Coroutine::get_current();
 
-    uv_timer_t timer;
-    timer.data = co;
-
-    uv_timer_init(uv_default_loop(), &timer);
-    uv_timer_start(&timer, sleep_timeout, seconds * 1000, 0);
+    timer_manager.add_timer(seconds * Timer::SECOND, sleep_timeout, (void *) co);
 
     co->yield();
 

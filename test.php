@@ -3,15 +3,21 @@
 study_event_init();
 
 go(function() {
-    var_dump(1);
+    var_dump(Co::getCid());
     Co::sleep(1);
-    var_dump(2);
+    var_dump(Co::getCid());
 });
 
 go(function() {
-    var_dump(3);
+    var_dump(Co::getCid());
     Co::sleep(1);
-    var_dump(4);
+    var_dump(Co::getCid());
+});
+
+go(function() {
+    var_dump(Co::getCid());
+    Co::sleep(1);
+    var_dump(Co::getCid());
 });
 
 study_event_wait();
